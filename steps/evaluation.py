@@ -1,9 +1,10 @@
 import logging
 from zenml import step
+import pandas as pd
 
 
 @step
-def evaluation(df: pd.DataFrame) -> None:
+def evaluate_model(df: pd.DataFrame) -> None:
     """
     Evaluate the model on the ingested data
 

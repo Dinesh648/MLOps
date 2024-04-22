@@ -1,6 +1,6 @@
 import logging
 import pandas as pd
-from zenml import steps
+from zenml import step
 
 
 @step

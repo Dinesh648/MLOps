@@ -4,5 +4,5 @@ from zenml import step
 
 
 @step
-def clean_df(df: pd.DataFrame) -> pd.DataFrame:
+def clean_df(df: pd.DataFrame) -> None:
     pass
