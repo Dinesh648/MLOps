@@ -35,10 +35,10 @@ class LinearRegressionModel(Model):
         """
         try:
             reg = LinearRegression(**kwargs)
+            print(X_train.isnull().sum())
             reg.fit(X_train, y_train)
             logging.info("Linear Regression model trained.")
             return reg
         except Exception as e:
             logging.error(f"Error training Linear Regression model: {e}")
             raise e
-        

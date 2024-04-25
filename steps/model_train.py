@@ -27,7 +27,7 @@ def train_model(
         RegressorMixin
     """
     model = None
-    if config.model_name == "LinearRegression":
+    if config.model_name == "Linear Regression":
         model = LinearRegressionModel()
         trained_model = model.train(X_train, y_train)
         return trained_model

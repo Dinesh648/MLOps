@@ -20,7 +20,8 @@ class IngestData:
         Ingesting the data from the path into the pipeline
         """
         logging.info(f"Ingesting data from path {self.data_path}")
-        return pd.read_csv(self.data_path)
+        df = pd.DataFrame(pd.read_csv(self.data_path))
+        return df
 
 
 @step
@@ -37,7 +38,7 @@ def ingest_df(data_path: str) -> pd.DataFrame:
     try:
         ingest_data = IngestData(data_path)
         df = ingest_data.get_data()
-        return df
+        return pd.DataFrame(df)
     except Exception as e:
         logging.exception(f"Error ingesting data: {e}")
         raise e
