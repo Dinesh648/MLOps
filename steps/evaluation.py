@@ -26,7 +26,9 @@ def evaluate_model(model: RegressorMixin,
     """
     try:
         prediction = model.predict(X_test)
-        
+        prediction = pd.Series(prediction)
+        y_test = pd.Series(y_test)
+
         mse_class = MSE()
         mse = mse_class.calculate_scores(y_test, prediction)
 
