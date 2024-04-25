@@ -1,4 +1,5 @@
 from zenml import pipeline
+import pandas as pd
 from steps.ingest_data import ingest_df
 from steps.clean_data import clean_data
 from steps.model_train import train_model

@@ -28,7 +28,7 @@ class MSE(Evaluation):
     def calculate_scores(self, y_true: pd.Series, y_pred: pd.Series):
         try:
             logging.info("Calculating MSE")
-            mse = mean_squared_error(pd.Series(y_true), pd.Series(y_pred))
+            mse = mean_squared_error(y_true, y_pred)
             logging.info(f"MSE: {mse}")
             return mse
         except Exception as e:
@@ -43,7 +43,7 @@ class R2(Evaluation):
     def calculate_scores(self, y_true: pd.Series, y_pred: pd.Series):
         try:
             logging.info("Calculating R2")
-            r2 = r2_score(pd.Series(y_true), pd.Series(y_pred))
+            r2 = r2_score(y_true, y_pred)
             logging.info(f"R2: {r2}")
             return r2
         except Exception as e:
@@ -58,7 +58,7 @@ class RMSE(Evaluation):
     def calculate_scores(self, y_true: pd.Series, y_pred: pd.Series):
         try:
             logging.info("Calculating RMSE")
-            rmse = np.sqrt(mean_squared_error(pd.Series(y_true), pd.Series(y_pred)))
+            rmse = np.sqrt(mean_squared_error(y_true, y_pred))
             logging.info(f"RMSE: {rmse}")
             return rmse
         except Exception as e:

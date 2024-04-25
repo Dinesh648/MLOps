@@ -35,6 +35,7 @@ def clean_data(
         divide_strategy = DataDivideStrategy()
         data_cleaning = DataCleaning(preprocessed_data, divide_strategy)
         x_train, x_test, y_train, y_test = data_cleaning.handle_data()
+        y_train, y_test = pd.Series(y_train), pd.Series(y_test)
         return x_train, x_test, y_train, y_test
     except Exception as e:
         logging.error(e)

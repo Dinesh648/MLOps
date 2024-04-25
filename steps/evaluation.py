@@ -10,7 +10,7 @@ from typing_extensions import Annotated
 @step
 def evaluate_model(model: RegressorMixin,
                    X_test: pd.DataFrame,
-                   y_test: np.ndarray,
+                   y_test: pd.DataFrame,
                    ) -> Tuple[
                        Annotated[float,"r2_score"],
                        Annotated[float,"rmse"],
@@ -26,8 +26,6 @@ def evaluate_model(model: RegressorMixin,
     """
     try:
         prediction = model.predict(X_test)
-        prediction = pd.Series(prediction)
-        y_test = pd.Series(y_test)
 
         mse_class = MSE()
         mse = mse_class.calculate_scores(y_test, prediction)
