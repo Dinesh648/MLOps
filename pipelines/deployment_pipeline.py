@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import json
 from zenml import pipeline, step
 from zenml.config import DockerSettings
 # from materializer.custom_materializer import cs_materializer
@@ -15,6 +16,7 @@ from steps.clean_data import clean_data
 from steps.evaluation import evaluate_model
 from steps.ingest_data import ingest_df
 from steps.model_train import train_model
+from .utils import get_data_for_test
 
 # the settings inside docker that should be followed
 docker_settings = DockerSettings(required_integrations=[MLFLOW])
@@ -46,6 +48,12 @@ class MLFlowDeploymentLoaderStepParameters(BaseParameters):
     running: bool = True
 
 @step(enable_cache=False)
+def dynamic_importer() -> str:
+    data = get_data_for_test()
+    return data
+
+
+@step(enable_cache=False)
 def prediction_service_loader(
     pipeline_name: str,
     pipeline_step_name: str,
@@ -73,9 +81,32 @@ def prediction_service_loader(
 @step
 def predictor(
     service: MLFlowDeploymentService,
-    data: np.ndarray,
-    
-)
+    data: str,
+) -> pd.Series:
+    service.start(timeout=10)
+    data = json.loads(data)
+    data.pop("columns")
+    data.pop("index")
+    columns_for_df = [
+        "payment_sequential",
+        "payment_installments",
+        "payment_value",
+        "price",
+        "freight_value",
+        "product_name_lenght",
+        "product_description_lenght",
+        "product_photos_qty",
+        "product_weight_g",
+        "product_length_cm",
+        "product_height_cm",
+        "product_width_cm",
+    ]
+    df = pd.DataFrame(data["data"], columns=columns_for_df)
+    json_list = json.loads(json.dumps(list(df.T.to_dict().values())))
+    data = pd.Series(json_list)
+    predictions = service.predict(data)
+    predictions = pd.Series(predictions)
+    return predictions
 
 
 @pipeline(enable_cache=False, settings={"docker":docker_settings})
@@ -96,3 +127,14 @@ def continous_deployment_pipeline(
         workers=workers,
         timeout=timeout,
     )
+
+@pipeline(enable_cache=False)
+def inference_pipeline(pipeline_name: str, pipeline_step_name: str):
+    data = dynamic_importer()
+    service = prediction_service_loader(
+        pipeline_name=pipeline_name,
+        pipeline_step_name=pipeline_step_name,
+        running=False,
+    )
+    prediction = predictor(service=service, data=data)
+    return prediction
